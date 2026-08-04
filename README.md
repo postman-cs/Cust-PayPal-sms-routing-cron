@@ -35,6 +35,8 @@ Create these repository variables:
 | `DD_LOG_QUERY` | `service:otp-routing` |
 | `DD_INDEXES` | `*` or a comma-separated allowlist |
 
+Until both Datadog secrets and `DD_LOG_QUERY` are configured, scheduled runs exit successfully with a visible warning and do not upload an artifact. This prevents a newly installed cron from producing nightly failure noise.
+
 Pricing stays in a secret rather than the repository:
 
 ```json

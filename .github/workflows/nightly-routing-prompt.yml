@@ -25,32 +25,49 @@ jobs:
     env:
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
       DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
-      DD_SITE: ${{ vars.DD_SITE }}
+      DD_SITE: ${{ vars.DD_SITE || 'datadoghq.com' }}
       DD_LOG_QUERY: ${{ vars.DD_LOG_QUERY }}
-      DD_INDEXES: ${{ vars.DD_INDEXES }}
+      DD_INDEXES: ${{ vars.DD_INDEXES || '*' }}
       WINDOW_HOURS: ${{ inputs.hours || '24' }}
       VENDOR_PRICING_JSON: ${{ secrets.VENDOR_PRICING_JSON }}
       ROUTING_POLICY_JSON: ${{ secrets.ROUTING_POLICY_JSON }}
     steps:
+      - name: Check scheduled-run configuration
+        id: configuration
+        shell: bash
+        run: |
+          if [[ -n "$DD_API_KEY" && -n "$DD_APP_KEY" && -n "$DD_LOG_QUERY" ]]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Skipping prompt generation until DD_API_KEY, DD_APP_KEY, and DD_LOG_QUERY are configured."
+          fi
+
       - name: Check out repository
+        if: steps.configuration.outputs.ready == 'true'
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - name: Use Node.js 24
+        if: steps.configuration.outputs.ready == 'true'
         uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: "24"
           cache: npm
 
       - name: Install locked dependencies
+        if: steps.configuration.outputs.ready == 'true'
         run: npm ci
 
       - name: Verify generator
+        if: steps.configuration.outputs.ready == 'true'
         run: npm test
 
       - name: Build Claude prompt pack
+        if: steps.configuration.outputs.ready == 'true'
         run: npm run build
 
       - name: Upload private prompt artifact
+        if: steps.configuration.outputs.ready == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: paypal-routing-prompt-${{ github.run_id }}
