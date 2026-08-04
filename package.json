@@ -1,0 +1,17 @@
+{
+  "name": "cust-paypal-sms-routing-cron",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Nightly GitHub cron job that produces a Claude-ready PayPal SMS routing prompt pack.",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "node src/cli.mjs --output dist/claude-routing-prompt.md",
+    "sample": "node src/cli.mjs --fixture fixtures/datadog-logs.sample.json --from 2026-08-02T03:00:00.000Z --to 2026-08-03T03:00:00.000Z --pricing fixtures/vendor-pricing.sample.json --output dist/claude-routing-prompt.md",
+    "test": "node --test",
+    "check": "npm test && npm run sample"
+  },
+  "license": "UNLICENSED"
+}

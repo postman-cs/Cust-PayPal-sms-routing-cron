@@ -1,0 +1,26 @@
+{
+  "countryPaths": [
+    "attributes.attributes.destination_country",
+    "attributes.attributes.country",
+    "attributes.attributes.country_code"
+  ],
+  "vendorPaths": [
+    "attributes.attributes.aggregator",
+    "attributes.attributes.vendor",
+    "attributes.attributes.provider"
+  ],
+  "eventPaths": [
+    "attributes.attributes.routing_event",
+    "attributes.attributes.event",
+    "attributes.attributes.status"
+  ],
+  "countPaths": [
+    "attributes.attributes.count",
+    "attributes.attributes.event_count"
+  ],
+  "eventAliases": {
+    "requested": ["requested", "request", "otp_requested", "otp_request"],
+    "submitted": ["submitted", "submission", "otp_submitted", "otp_submission"],
+    "converted": ["converted", "conversion", "delivered", "otp_converted"]
+  }
+}

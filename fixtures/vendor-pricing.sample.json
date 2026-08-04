@@ -1,0 +1,8 @@
+{
+  "currency": "USD",
+  "vendors": [
+    {"country":"US","vendor":"Twilio","unitPrice":0.008},
+    {"country":"US","vendor":"Sinch","unitPrice":0.007},
+    {"country":"CA","vendor":"Link Mobility","unitPrice":0.009}
+  ]
+}

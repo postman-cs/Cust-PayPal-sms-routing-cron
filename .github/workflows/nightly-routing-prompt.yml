@@ -1,0 +1,59 @@
+name: Nightly PayPal routing prompt
+
+on:
+  schedule:
+    - cron: "0 20 * * *"
+      timezone: "America/Phoenix"
+  workflow_dispatch:
+    inputs:
+      hours:
+        description: Hours of Datadog evidence to include
+        required: false
+        default: "24"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nightly-paypal-routing-prompt
+  cancel-in-progress: false
+
+jobs:
+  build-prompt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      DD_APP_KEY: ${{ secrets.DD_APP_KEY }}
+      DD_SITE: ${{ vars.DD_SITE }}
+      DD_LOG_QUERY: ${{ vars.DD_LOG_QUERY }}
+      DD_INDEXES: ${{ vars.DD_INDEXES }}
+      WINDOW_HOURS: ${{ inputs.hours || '24' }}
+      VENDOR_PRICING_JSON: ${{ secrets.VENDOR_PRICING_JSON }}
+      ROUTING_POLICY_JSON: ${{ secrets.ROUTING_POLICY_JSON }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Use Node.js 24
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Verify generator
+        run: npm test
+
+      - name: Build Claude prompt pack
+        run: npm run build
+
+      - name: Upload private prompt artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: paypal-routing-prompt-${{ github.run_id }}
+          path: dist/claude-routing-prompt.md
+          if-no-files-found: error
+          retention-days: 7

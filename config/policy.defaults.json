@@ -1,0 +1,11 @@
+{
+  "recommendationOnly": true,
+  "signalFloor": null,
+  "maximumShiftPercent": null,
+  "analysisInstructions": [
+    "Use only the aggregate evidence in this prompt.",
+    "Mark missing pricing, calibration, thresholds, and ownership as unknown.",
+    "Do not invent a vendor allocation when the approved policy is incomplete.",
+    "Return recommendations for human review; never claim that routing was changed."
+  ]
+}
