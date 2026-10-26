@@ -46,6 +46,8 @@ jobs:
       - name: Check out repository
         if: steps.configuration.outputs.ready == 'true'
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
 
       - name: Use Node.js 24
         if: steps.configuration.outputs.ready == 'true'
